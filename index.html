@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>3D Car Battle Racing</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Main Menu -->s
+    <div class="menu-screen" id="mainMenu">
+        <div class="game-title">CAR BATTLE RACING</div>
+        <div class="game-subtitle">3D Action Racing Game</div>
+        
+        <div class="car-selection" id="carSelection">
+            <div class="car-card" data-car="0">
+                <div class="car-name">🏎️ SPEED DEMON</div>
+                <div class="car-stats">Tezlik: ⭐⭐⭐⭐⭐<br>Kuch: ⭐⭐⭐</div>
+            </div>
+            <div class="car-card selected" data-car="1">
+                <div class="car-name">🚗 TANK DESTROYER</div>
+                <div class="car-stats">Tezlik: ⭐⭐⭐<br>Kuch: ⭐⭐⭐⭐⭐</div>
+            </div>
+            <div class="car-card" data-car="2">
+                <div class="car-name">🏁 BALANCED RACER</div>
+                <div class="car-stats">Tezlik: ⭐⭐⭐⭐<br>Kuch: ⭐⭐⭐⭐</div>
+            </div>
+        </div>
+
+        <button class="menu-btn" id="startBtn">O'yinni Boshlash</button>
+        <button class="menu-btn" id="instructionsBtn">Qoidalar</button>
+    </div>
+
+    <!-- HUD -->
+    <div class="hud" id="hud">
+        <div class="hud-top">
+            <div class="stat-box">
+                <div class="stat-label">Ball</div>
+                <div class="stat-value" id="score">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Dushmanlar</div>
+                <div class="stat-value" id="enemiesLeft">10</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Vaqt</div>
+                <div class="stat-value" id="timer">0</div>
+            </div>
+        </div>
+        
+        <div class="health-bar">
+            <div class="health-fill" id="healthFill"></div>
+            <div class="health-text" id="healthText">100%</div>
+        </div>
+    </div>
+
+    <!-- Mobile Controls -->
+    <div class="mobile-controls" id="mobileControls">
+        <div class="joystick-area">
+            <div class="control-btn" id="leftBtn">◄</div>
+            <div class="control-btn" id="rightBtn">►</div>
+        </div>
+        <div class="action-area">
+            <div class="control-btn" id="shootBtn">🔫</div>
+            <div class="control-btn" id="boostBtn">⚡</div>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div class="game-over-screen" id="gameOverScreen">
+        <div class="game-over-title" id="gameOverTitle">G'alaba!</div>
+        <div class="final-stats">
+            <div class="final-stat">Yakuniy Ball: <span id="finalScore">0</span></div>
+            <div class="final-stat">O'ldirganlar: <span id="finalKills">0</span></div>
+            <div class="final-stat">Vaqt: <span id="finalTime">0</span>s</div>
+        </div>
+        <button class="menu-btn" id="restartBtn">Qayta O'ynash</button>
+        <button class="menu-btn" id="menuBtn">Menyu</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
