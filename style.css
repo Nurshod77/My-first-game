@@ -43,11 +43,8 @@ body {
     font-size: 3.5em;
     font-weight: bold;
     text-transform: uppercase;
-    background: linear-gradient(45deg, #00f2fe, #4facfe, #00f2fe);
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 30px rgba(79, 172, 254, 0.5);
+    color: white;
     margin-bottom: 20px;
-    animation: glow 2s ease-in-out infinite;
 }
 
 .game-subtitle {
@@ -58,25 +55,15 @@ body {
 }
 
 .menu-btn {
-    padding: 15px 50px;
-    margin: 10px;
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #fff;
-    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-    border: 2px solid #4facfe;
-    border-radius: 50px;
-    cursor: pointer;
     transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-}
-
-.menu-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-    background: linear-gradient(45deg, #764ba2 0%, #667eea 100%);
+    border: none;
+    background: #24243e;
+    margin-bottom: 20px;
+    padding: 10px 66px;
+    color: white;
+    font-size: 20px;
+    border-radius: 20px;
+    cursor: pointer;
 }
 
 .menu-btn:active {
@@ -92,7 +79,8 @@ body {
 
 .car-card {
     padding: 20px;
-    background: rgba(255, 255, 255, 0.1);
+    /* background: rgba(255, 255, 255, 0.1) */
+    background: transparent;
     border: 2px solid #4facfe;
     border-radius: 15px;
     cursor: pointer;
@@ -322,4 +310,17 @@ body {
     .health-bar {
         width: 200px;
     }
+}
+
+.choose-h2 {
+    font-size: 37px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: start;
+}
+
+
+.btns {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
 }

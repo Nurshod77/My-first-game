@@ -8,12 +8,12 @@
 </head>
 <body>
     <canvas id="gameCanvas"></canvas>
-
-    <!-- Main Menu -->s
+    <!-- Main Menu -->
     <div class="menu-screen" id="mainMenu">
         <div class="game-title">CAR BATTLE RACING</div>
         <div class="game-subtitle">3D Action Racing Game</div>
         
+        <h2 class="choose-h2">Mashina turini tanlang:</h2>
         <div class="car-selection" id="carSelection">
             <div class="car-card" data-car="0">
                 <div class="car-name">🏎️ SPEED DEMON</div>
@@ -29,8 +29,13 @@
             </div>
         </div>
 
-        <button class="menu-btn" id="startBtn">O'yinni Boshlash</button>
-        <button class="menu-btn" id="instructionsBtn">Qoidalar</button>
+        <div class="btns">
+            <button class="menu-btn" id="startBtn">O'yinni Boshlash</button>
+            <a href="otherGame.html">
+                <button class="menu-btn" id="startBtn">Boshqa O'yinlar</button>
+            </a>
+            <button class="menu-btn" id="instructionsBtn">Qoidalar</button>
+        </div>
     </div>
 
     <!-- HUD -->

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boshqa O'yinlar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .main-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .game-card .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .game-card h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .game-card p {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .game-screen {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            margin: 0 auto;
+            animation: zoomIn 0.3s ease-out;
+        }
+
+        .back-button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .game-title {
+            text-align: center;
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .game-message {
+            text-align: center;
+            font-size: 1.1em;
+            color: #555;
+            margin: 20px 0;
+            min-height: 60px;
+            padding: 10px;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-option {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            font-size: 0.9em;
+        }
+
+        .btn-option:hover {
+            background: #2980b9;
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 1.2em;
+            color: #333;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: #95a5a6;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .memory-card:hover {
+            transform: scale(1.05);
+        }
+
+        .memory-card.flipped {
+            background: #3498db;
+        }
+
+        .memory-card.matched {
+            background: #2ecc71;
+            pointer-events: none;
+        }
+
+        .rps-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .click-area {
+            width: 100%;
+            height: 200px;
+            background: #f39c12;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .click-area:active {
+            transform: scale(0.95);
+        }
+
+        .click-area.started {
+            background: #27ae60;
+            color: white;
+        }
+
+        .word-input {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .word-input input {
+            flex: 1;
+        }
+
+        .words-list {
+            margin: 20px 0;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .word-item {
+            padding: 8px;
+            background: white;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
+        .color-box {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .color-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .color-btn {
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-box .label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .stat-box .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Main Menu -->
+        <div id="mainMenu" class="main-menu">
+            <div class="header" style="grid-column: 1/-1;">
+                <h1>🎮 Boshqa O'yinlar</h1>
+                <p>Sevimli o'yiningizni tanlang va o'ynashni boshlang!</p>
+            </div>
+
+            <div class="game-card" onclick="startGame('numberGame')">
+                <div class="icon">🎲</div>
+                <h2>Raqamlar O'yini</h2>
+                <p>1 dan 100 gacha raqamni topish</p>
+            </div>
+
+            <div class="game-card" onclick="startGame('rpsGame')">
+                <div class="icon">✋</div>
+                <h2>Qo'l, Daxt, Qaychi</h2>
+                <p>Klassik o'yin - kompyuterga qarshi</p>
+            </div>
+
+            <div class="game-card" onclick="startGame('memoryGame')">
+                <div class="icon">🧠</div>
+                <h2>Xotira O'yini</h2>
+                <p>Bir xil juftiklarni toping</p>
+            </div>
+
+            <div class="game-card" onclick="startGame('clickGame')">
+                <div class="icon">⚡</div>
+                <h2>Tezlikka Bosilish</h2>
+                <p>Tezlik va anzimani sinab ko'ring</p>
+            </div>
+
+            <div class="game-card" onclick="startGame('wordGame')">
+                <div class="icon">📝</div>
+                <h2>So'z O'yini</h2>
+                <p>Xarf bilan boshlanadigan so'zlarni yozing</p>
+            </div>
+
+            <div class="game-card" onclick="startGame('colorGame')">
+                <div class="icon">🎨</div>
+                <h2>Rang O'yini</h2>
+                <p>Rang nomini toping</p>
+            </div>
+        </div>
+
+        <!-- Number Game -->
+        <div id="numberGame" class="game-screen hidden">
+            <button class="back-button" onclick="backToMenu()">← Orqaga</button>
+            <h1 class="game-title">🎲 Raqamlar O'yini</h1>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Urinishlar</div>
+                    <div class="value" id="numberAttempts">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Holat</div>
+                    <div class="value" id="numberStatus">Boshlash</div>
+                </div>
+            </div>
+            <div class="game-message" id="numberMessage">1 dan 100 gacha raqam taxmin qiling!</div>
+            <div class="input-group">
+                <input type="number" id="numberInput" placeholder="Raqam kiriting..." onkeypress="handleNumberKeypress(event)">
+            </div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="guessNumber()">Tekshirish</button>
+                <button class="btn-primary" onclick="resetNumberGame()">Yangi O'yin</button>
+            </div>
+        </div>
+
+        <!-- Rock Paper Scissors Game -->
+        <div id="rpsGame" class="game-screen hidden">
+            <button class="back-button" onclick="backToMenu()">← Orqaga</button>
+            <h1 class="game-title">✋ Qo'l, Daxt, Qaychi</h1>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Siz</div>
+                    <div class="value" id="rpsUserScore">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Kompyuter</div>
+                    <div class="value" id="rpsComputerScore">0</div>
+                </div>
+            </div>
+            <div class="game-message" id="rpsMessage">Qo'l, Daxt yoki Qaychi tanlang!</div>
+            <div class="rps-options">
+                <button class="btn-option" onclick="playRPS('Qo\'l')">✋ Qo'l</button>
+                <button class="btn-option" onclick="playRPS('Daxt')">📄 Daxt</button>
+                <button class="btn-option" onclick="playRPS('Qaychi')">✂️ Qaychi</button>
+            </div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="resetRPS()">Qayta Boshlash</button>
+            </div>
+        </div>
+
+        <!-- Memory Game -->
+        <div id="memoryGame" class="game-screen hidden">
+            <button class="back-button" onclick="backToMenu()">← Orqaga</button>
+            <h1 class="game-title">🧠 Xotira O'yini</h1>
+            <div class="game-message">Juftiklarni topib chiqing! <span id="memoryProgress">0</span> / 6</div>
+            <div class="memory-grid" id="memoryGrid"></div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="resetMemoryGame()">Qayta Boshlash</button>
+            </div>
+        </div>
+
+        <!-- Click Speed Game -->
+        <div id="clickGame" class="game-screen hidden">
+            <button class="back-button" onclick="backToMenu()">← Orqaga</button>
+            <h1 class="game-title">⚡ Tezlikka Bosilish</h1>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Bosishlar</div>
+                    <div class="value" id="clickCount">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Vaqt</div>
+                    <div class="value" id="clickTime">0s</div>
+                </div>
+            </div>
+            <div class="game-message" id="clickMessage">Bosishni boshlang!</div>
+            <div class="click-area" id="clickArea" onclick="handleClick()">Bosing!</div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="resetClickGame()">Qayta Boshlash</button>
+            </div>
+        </div>
+
+        <!-- Word Game -->
+        <div id="wordGame" class="game-screen hidden">
+            <button class="back-button" onclick="backToMenu()">← Orqaga</button>
+            <h1 class="game-title">📝 So'z O'yini</h1>
+            <div class="game-message" id="wordMessage">Xarf bilan boshlanadigan so'zlarni yozing!</div>
+            <div class="stat-box" style="margin: 20px 0;">
+                <div class="label">So'zlar soni</div>
+                <div class="value" id="wordCount">0</div>
+            </div>
+            <div class="word-input">
+                <input type="text" id="wordInput" placeholder="So'z kiriting..." onkeypress="handleWordKeypress(event)">
+                <button class="btn-primary" onclick="addWord()" style="flex: 0 0 80px;">Qo'sh</button>
+            </div>
+            <div class="words-list" id="wordsList"></div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="resetWordGame()">Yangi O'yin</button>
+            </div>
+        </div>
+
+        <!-- Color Game -->
+        <div id="colorGame" class="game-screen hidden">
+            <button class="back-button" onclick="backToMenu()">← Orqaga</button>
+            <h1 class="game-title">🎨 Rang O'yini</h1>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">To'g'ri</div>
+                    <div class="value" id="colorCorrect">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Noto'g'ri</div>
+                    <div class="value" id="colorWrong">0</div>
+                </div>
+            </div>
+            <div class="game-message" id="colorMessage">Rang nomini toping!</div>
+            <div class="color-box" id="colorBox"></div>
+            <div class="color-buttons" id="colorButtons"></div>
+            <div class="button-group">
+                <button class="btn-primary" onclick="resetColorGame()">Qayta Boshlash</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let numberSecret = 0;
+        let numberAttempts = 0;
+        let rpsUserScore = 0;
+        let rpsComputerScore = 0;
+        let memoryCards = [];
+        let memoryFlipped = [];
+        let memoryMatched = [];
+        let clickStartTime = 0;
+        let clickGameActive = false;
+        let clickCount = 0;
+        let wordList = [];
+        let colorCorrect = 0;
+        let colorWrong = 0;
+
+        // Menu Navigation
+        function startGame(gameId) {
+            document.getElementById('mainMenu').classList.add('hidden');
+            document.getElementById(gameId).classList.remove('hidden');
+            
+            if (gameId === 'numberGame') {
+                resetNumberGame();
+            } else if (gameId === 'rpsGame') {
+                resetRPS();
+            } else if (gameId === 'memoryGame') {
+                resetMemoryGame();
+            } else if (gameId === 'clickGame') {
+                resetClickGame();
+            } else if (gameId === 'wordGame') {
+                resetWordGame();
+            } else if (gameId === 'colorGame') {
+                resetColorGame();
+            }
+        }
+
+        function backToMenu() {
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.add('hidden');
+            });
+            document.getElementById('mainMenu').classList.remove('hidden');
+        }
+
+        // Number Game
+        function resetNumberGame() {
+            numberSecret = Math.floor(Math.random() * 100) + 1;
+            numberAttempts = 0;
+            document.getElementById('numberInput').value = '';
+            document.getElementById('numberMessage').textContent = '1 dan 100 gacha raqam taxmin qiling!';
+            document.getElementById('numberAttempts').textContent = '0';
+            document.getElementById('numberStatus').textContent = 'Boshlash';
+            document.getElementById('numberInput').focus();
+        }
+
+        function handleNumberKeypress(e) {
+            if (e.key === 'Enter') guessNumber();
+        }
+
+        function guessNumber() {
+            const guess = parseInt(document.getElementById('numberInput').value);
+            if (!guess) return;
+            
+            numberAttempts++;
+            document.getElementById('numberAttempts').textContent = numberAttempts;
+
+            if (guess === numberSecret) {
+                document.getElementById('numberMessage').textContent = `🎉 To'g'ri! ${numberAttempts} ta urinishda topildiz!`;
+                document.getElementById('numberStatus').textContent = '✅ Yutdi';
+                document.getElementById('numberInput').disabled = true;
+            } else if (guess < numberSecret) {
+                document.getElementById('numberMessage').textContent = '⬆️ Katta raqam kiriting!';
+                document.getElementById('numberStatus').textContent = 'Davom...';
+            } else {
+                document.getElementById('numberMessage').textContent = '⬇️ Kichik raqam kiriting!';
+                document.getElementById('numberStatus').textContent = 'Davom...';
+            }
+            document.getElementById('numberInput').value = '';
+        }
+
+        // Rock Paper Scissors
+        function resetRPS() {
+            rpsUserScore = 0;
+            rpsComputerScore = 0;
+            document.getElementById('rpsUserScore').textContent = '0';
+            document.getElementById('rpsComputerScore').textContent = '0';
+            document.getElementById('rpsMessage').textContent = 'Qo\'l, Daxt yoki Qaychi tanlang!';
+        }
+
+        function playRPS(userChoice) {
+            const options = ['Qo\'l', 'Daxt', 'Qaychi'];
+            const computerChoice = options[Math.floor(Math.random() * 3)];
+            let result = '';
+
+            if (userChoice === computerChoice) {
+                result = 'Tenglik! 🤝';
+            } else if (
+                (userChoice === 'Qo\'l' && computerChoice === 'Qaychi') ||
+                (userChoice === 'Daxt' && computerChoice === 'Qo\'l') ||
+                (userChoice === 'Qaychi' && computerChoice === 'Daxt')
+            ) {
+                result = 'Siz yutdingiz! 🎉';
+                rpsUserScore++;
+                document.getElementById('rpsUserScore').textContent = rpsUserScore;
+            } else {
+                result = 'Kompyuter yutdi! 🤖';
+                rpsComputerScore++;
+                document.getElementById('rpsComputerScore').textContent = rpsComputerScore;
+            }
+            document.getElementById('rpsMessage').textContent = `${result}\nSiz: ${userChoice} | Kompyuter: ${computerChoice}`;
+        }
+
+        // Memory Game
+        function resetMemoryGame() {
+            const nums = [1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6];
+            memoryCards = nums.sort(() => Math.random() - 0.5);
+            memoryFlipped = [];
+            memoryMatched = [];
+            document.getElementById('memoryProgress').textContent = '0';
+            renderMemoryGrid();
+        }
+
+        function renderMemoryGrid() {
+            const grid = document.getElementById('memoryGrid');
+            grid.innerHTML = '';
+            memoryCards.forEach((card, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'memory-card';
+                if (memoryMatched.includes(i)) btn.classList.add('matched');
+                if (memoryFlipped.includes(i)) btn.classList.add('flipped');
+                btn.textContent = (memoryFlipped.includes(i) || memoryMatched.includes(i)) ? card : '?';
+                btn.onclick = () => toggleMemoryCard(i);
+                grid.appendChild(btn);
+            });
+        }
+
+        function toggleMemoryCard(index) {
+            if (memoryFlipped.includes(index) || memoryMatched.includes(index)) return;
+            memoryFlipped.push(index);
+            renderMemoryGrid();
+
+            if (memoryFlipped.length === 2) {
+                if (memoryCards[memoryFlipped[0]] === memoryCards[memoryFlipped[1]]) {
+                    memoryMatched.push(memoryFlipped[0], memoryFlipped[1]);
+                    memoryFlipped = [];
+                    document.getElementById('memoryProgress').textContent = memoryMatched.length / 2;
+                    if (memoryMatched.length === 12) {
+                        document.getElementById('memoryProgress').textContent = '6';
+                    }
+                    renderMemoryGrid();
+                } else {
+                    setTimeout(() => {
+                        memoryFlipped = [];
+                        renderMemoryGrid();
+                    }, 800);
+                }
+            }
+        }
+
+        // Click Speed Game
+        function resetClickGame() {
+            clickCount = 0;
+            clickStartTime = 0;
+            clickGameActive = false;
+            document.getElementById('clickCount').textContent = '0';
+            document.getElementById('clickTime').textContent = '0s';
+            document.getElementById('clickMessage').textContent = 'Bosishni boshlang!';
+            document.getElementById('clickArea').textContent = 'Bosing!';
+            document.getElementById('clickArea').classList.remove('started');
+        }
+
+        function handleClick() {
+            if (!clickGameActive) {
+                clickGameActive = true;
+                clickStartTime = Date.now();
+                clickCount = 0;
+                document.getElementById('clickArea').classList.add('started');
+                document.getElementById('clickArea').textContent = 'Bosing!';
+                
+                setTimeout(() => {
+                    clickGameActive = false;
+                    const time = Math.round((Date.now() - clickStartTime) / 1000);
+                    document.getElementById('clickMessage').textContent = `${clickCount} marta bosildiz ${time} soniyada!`;
+                    document.getElementById('clickArea').classList.remove('started');
+                    document.getElementById('clickArea').textContent = 'Qayta bosing!';
+                }, 5000);
+            } else {
+                clickCount++;
+                document.getElementById('clickCount').textContent = clickCount;
+                const elapsed = Math.round((Date.now() - clickStartTime) / 1000);
+                document.getElementById('clickTime').textContent = elapsed + 's';
+            }
+        }
+
+        // Word Game
+        function resetWordGame() {
+            wordList = [];
+            document.getElementById('wordInput').value = '';
+            document.getElementById('wordCount').textContent = '0';
+            document.getElementById('wordsList').innerHTML = '';
+            document.getElementById('wordMessage').textContent = 'Xarf bilan boshlanadigan so\'zlarni yozing!';
+        }
+
+        function handleWordKeypress(e) {
+            if (e.key === 'Enter') addWord();
+        }
+
+        function addWord() {
+            const input = document.getElementById('wordInput');
+            const word = input.value.trim();
+            
+            if (!word) return;
+            wordList.push(word);
+            input.value = '';
+            
+            const list = document.getElementById('wordsList');
+            const item = document.createElement('div');
+            item.className = 'word-item';
+            item.textContent = word;
+            list.appendChild(item);
+            
+            document.getElementById('wordCount').textContent = wordList.length;
+            input.focus();
+        }
+
+        // Color Game
+        function resetColorGame() {
+            colorCorrect = 0;
+            colorWrong = 0;
+            document.getElementById('colorCorrect').textContent = '0';
+            document.getElementById('colorWrong').textContent = '0';
+            generateColorRound();
+        }
+
+        const colorNames = {
+            '#FF0000': 'Qizil',
+            '#00FF00': 'Yashil',
+            '#0000FF': 'Ko\'k',
+            '#FFFF00': 'Sariq',
+            '#FF00FF': 'Magenta',
+            '#00FFFF': 'Siyan'
+        };
+
+        function generateColorRound() {
+            const colors = Object.keys(colorNames);
+            const correct = colors[Math.floor(Math.random() * colors.length)];
+            const options = [correct];
+            
+            while (options.length < 3) {
+                const random = colors[Math.floor(Math.random() * colors.length)];
+                if (!options.includes(random)) options.push(random);
+            }
+            options.sort(() => Math.random() - 0.5);
+            
+            document.getElementById('colorBox').style.background = correct;
+            document.getElementById('colorMessage').textContent = 'Rang nomini toping!';
+            
+            const buttons = document.getElementById('colorButtons');
+            buttons.innerHTML = '';
+            options.forEach(color => {
+                const btn = document.createElement('button');
+                btn.className = 'color-btn';
+                btn.style.background = color;
+                btn.textContent = colorNames[color];
+                btn.onclick = () => checkColor(color === correct, color);
+                buttons.appendChild(btn);
+            });
+        }
+
+        function checkColor(isCorrect, color) {
+            if (isCorrect) {
+                colorCorrect++;
+                document.getElementById('colorCorrect').textContent = colorCorrect;
+                document.getElementById('colorMessage').textContent = '✅ To\'g\'ri!';
+            } else {
+                colorWrong++;
+                document.getElementById('colorWrong').textContent = colorWrong;
+                document.getElementById('colorMessage').textContent = '❌ Noto\'g\'ri!';
+            }
+            
+            setTimeout(() => generateColorRound(), 1000);
+        }
+    </script>
+</body>
+</html>
