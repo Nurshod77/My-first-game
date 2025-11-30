@@ -824,3 +824,155 @@ animate = function() {
 
 console.log('🎮 3D Car Battle Racing yuklanmoqda...');
 console.log('✅ O\'yin tayyor! Start tugmasini bosing!');
+
+
+const translations = {
+uz: {
+    title: "CAR BATTLE RACING",
+    subtitle: "3D Action Racing O'yini",
+    chooseCar: "Mashina turini tanlang:",
+    car1Name: "🏎️ TEZKOR DEMON",
+    car2Name: "🚗 TANK YO'QOTUVCHI",
+    car3Name: "🏁 BALANSLI RACER",
+    car1Stats: "Tezlik: ⭐⭐⭐⭐⭐<br>Kuch: ⭐⭐⭐",
+    car2Stats: "Tezlik: ⭐⭐⭐<br>Kuch: ⭐⭐⭐⭐⭐",
+    car3Stats: "Tezlik: ⭐⭐⭐⭐<br>Kuch: ⭐⭐⭐⭐",
+    startBtn: "O'yinni Boshlash",
+    instructions: "Qoidalar",
+    scoreLabel: "Ball",
+    enemiesLabel: "Dushmanlar",
+    timeLabel: "Vaqt",
+    victory: "G'ALABA! 🏆",
+    defeat: "YUTQAZDINGIZ 💥",
+    finalScoreLabel: "Yakuniy Ball:",
+    finalKillsLabel: "O'ldirganlar:",
+    finalTimeLabel: "Vaqt:",
+    restart: "Qayta O'ynash",
+    menu: "Menyu",
+    instructionsText: "🎮 QOIDALAR:\n\n" +
+        "KOMPYUTER:\n" +
+        "↑ W / ↑ - Oldinga\n" +
+        "↓ S / ↓ - Orqaga\n" +
+        "← A / ← - Chapga\n" +
+        "→ D / → - O'ngga\n" +
+        "SPACE - Otish\n" +
+        "SHIFT - Tezlashtirish\n\n" +
+        "MOBIL:\n" +
+        "Ekrandagi tugmalardan foydalaning\n\n" +
+        "MAQSAD:\n" +
+        "✓ Barcha dushmanlarni yo'q qiling\n" +
+        "✓ Sog'ligingizni saqlang\n" +
+        "✓ Ko'proq ball to'plang!\n" +
+        "⚠️ Dushmanlar sizga o'q otadi!\n\n" +
+        "Omad tilaymiz! 🏁"
+},
+en: {
+    title: "CAR BATTLE RACING",
+    subtitle: "3D Action Racing Game",
+    chooseCar: "Choose Your Car:",
+    car1Name: "🏎️ SPEED DEMON",
+    car2Name: "🚗 TANK DESTROYER",
+    car3Name: "🏁 BALANCED RACER",
+    car1Stats: "Speed: ⭐⭐⭐⭐⭐<br>Power: ⭐⭐⭐",
+    car2Stats: "Speed: ⭐⭐⭐<br>Power: ⭐⭐⭐⭐⭐",
+    car3Stats: "Speed: ⭐⭐⭐⭐<br>Power: ⭐⭐⭐⭐",
+    startBtn: "Start Game",
+    instructions: "Instructions",
+    scoreLabel: "Score",
+    enemiesLabel: "Enemies",
+    timeLabel: "Time",
+    victory: "VICTORY! 🏆",
+    defeat: "GAME OVER 💥",
+    finalScoreLabel: "Final Score:",
+    finalKillsLabel: "Kills:",
+    finalTimeLabel: "Time:",
+    restart: "Restart",
+    menu: "Menu",
+    instructionsText: "🎮 CONTROLS:\n\n" +
+        "KEYBOARD:\n" +
+        "↑ W / ↑ - Forward\n" +
+        "↓ S / ↓ - Backward\n" +
+        "← A / ← - Left\n" +
+        "→ D / → - Right\n" +
+        "SPACE - Shoot\n" +
+        "SHIFT - Boost\n\n" +
+        "MOBILE:\n" +
+        "Use on-screen buttons\n\n" +
+        "OBJECTIVE:\n" +
+        "✓ Destroy all enemies\n" +
+        "✓ Keep your health up\n" +
+        "✓ Score more points!\n" +
+        "⚠️ Enemies shoot back!\n\n" +
+        "Good luck! 🏁"
+},
+ru: {
+    title: "CAR BATTLE RACING",
+    subtitle: "3D Гоночная Игра",
+    chooseCar: "Выберите машину:",
+    car1Name: "🏎️ ДЕМОН СКОРОСТИ",
+    car2Name: "🚗 ТАНК-РАЗРУШИТЕЛЬ",
+    car3Name: "🏁 СБАЛАНСИРОВАННЫЙ",
+    car1Stats: "Скорость: ⭐⭐⭐⭐⭐<br>Сила: ⭐⭐⭐",
+    car2Stats: "Скорость: ⭐⭐⭐<br>Сила: ⭐⭐⭐⭐⭐",
+    car3Stats: "Скорость: ⭐⭐⭐⭐<br>Сила: ⭐⭐⭐⭐",
+    startBtn: "Начать Игру",
+    instructions: "Правила",
+    scoreLabel: "Очки",
+    enemiesLabel: "Враги",
+    timeLabel: "Время",
+    victory: "ПОБЕДА! 🏆",
+    defeat: "ПОРАЖЕНИЕ 💥",
+    finalScoreLabel: "Итоговый счёт:",
+    finalKillsLabel: "Убийств:",
+    finalTimeLabel: "Время:",
+    restart: "Играть Снова",
+    menu: "Меню",
+    instructionsText: "🎮 УПРАВЛЕНИЕ:\n\n" +
+        "КЛАВИАТУРА:\n" +
+        "↑ W / ↑ - Вперёд\n" +
+        "↓ S / ↓ - Назад\n" +
+        "← A / ← - Влево\n" +
+        "→ D / → - Вправо\n" +
+        "ПРОБЕЛ - Стрелять\n" +
+        "SHIFT - Ускорение\n\n" +
+        "МОБИЛЬНЫЙ:\n" +
+        "Используйте кнопки на экране\n\n" +
+        "ЦЕЛЬ:\n" +
+        "✓ Уничтожить всех врагов\n" +
+        "✓ Сохранить здоровье\n" +
+        "✓ Набрать больше очков!\n" +
+        "⚠️ Враги стреляют в ответ!\n\n" +
+        "Удачи! 🏁"
+}
+};
+
+let currentLang = 'uz';
+
+function updateLanguage(lang) {
+currentLang = lang;
+const t = translations[lang];
+
+document.getElementById('gameTitle').textContent = t.title;
+document.getElementById('gameSubtitle').textContent = t.subtitle;
+document.getElementById('chooseCar').textContent = t.chooseCar;
+document.getElementById('car1Name').textContent = t.car1Name;
+document.getElementById('car2Name').textContent = t.car2Name;
+document.getElementById('car3Name').textContent = t.car3Name;
+document.getElementById('car1Stats').innerHTML = t.car1Stats;
+document.getElementById('car2Stats').innerHTML = t.car2Stats;
+document.getElementById('car3Stats').innerHTML = t.car3Stats;
+document.getElementById('startBtn').textContent = t.startBtn;
+document.getElementById('instructionsBtn').textContent = t.instructions;
+document.getElementById('scoreLabel').textContent = t.scoreLabel;
+document.getElementById('enemiesLabel').textContent = t.enemiesLabel;
+document.getElementById('timeLabel').textContent = t.timeLabel;
+document.getElementById('finalScoreLabel').textContent = t.finalScoreLabel;
+document.getElementById('finalKillsLabel').textContent = t.finalKillsLabel;
+document.getElementById('finalTimeLabel').textContent = t.finalTimeLabel;
+document.getElementById('restartBtn').textContent = t.restart;
+document.getElementById('menuBtn').textContent = t.menu;
+}
+
+document.getElementById('languageSelect').addEventListener('change', (e) => {
+updateLanguage(e.target.value);
+});

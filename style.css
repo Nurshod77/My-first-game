@@ -155,7 +155,7 @@ body {
 
 .health-bar {
     position: absolute;
-    bottom: 30px;
+    bottom: -470px;
     left: 50%;
     transform: translateX(-50%);
     width: 300px;
@@ -321,6 +321,25 @@ body {
 
 .btns {
     display: flex;
-    gap: 20px;
+    gap: 19px;
     margin-top: 20px;
+}
+
+/* Language Selector */
+.language-selector {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 101;
+}
+
+.language-selector select {
+    background: rgba(0, 0, 0, 0.8);
+    color: #4facfe;
+    border: 2px solid #4facfe;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
 }

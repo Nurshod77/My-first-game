@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>3D Car Battle Racing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Orbitron', 'Arial', sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #fff;
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100vh;
+            touch-action: none;
+        }
+
+        /* Language Selector */
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 101;
+        }
+
+        .language-selector select {
+            background: rgba(0, 0, 0, 0.8);
+            color: #4facfe;
+            border: 2px solid #4facfe;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Main Menu */
+        .menu-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            z-index: 100;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .menu-screen.hidden {
+            display: none;
+        }
+
+        .game-title {
+            font-size: 3.5em;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .game-subtitle {
+            font-size: 1.2em;
+            color: #a0a0ff;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+        }
+
+        .menu-btn {
+            transition: all 0.3s ease;
+            border: none;
+            background: #24243e;
+            margin-bottom: 20px;
+            padding: 10px 66px;
+            color: white;
+            font-size: 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .menu-btn:hover {
+            background: #4facfe;
+            transform: translateY(-2px);
+        }
+
+        .menu-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Car Selection */
+        .car-selection {
+            display: flex;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .car-card {
+            padding: 20px;
+            background: transparent;
+            border: 2px solid #4facfe;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .car-card:hover {
+            transform: scale(1.05);
+            border-color: #00f2fe;
+            box-shadow: 0 0 30px rgba(79, 172, 254, 0.5);
+        }
+
+        .car-card.selected {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.2);
+        }
+
+        .car-name {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #4facfe;
+        }
+
+        .car-stats {
+            font-size: 0.9em;
+            color: #a0a0ff;
+        }
+
+        /* HUD */
+        .hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: none;
+            z-index: 10;
+        }
+
+        .hud.active {
+            display: block;
+        }
+
+        .hud-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 25px;
+            border-radius: 10px;
+            border: 2px solid #4facfe;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: #a0a0ff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00f2fe;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+        }
+
+        .health-bar {
+            position: absolute;
+            bottom: -470px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #4facfe;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ff6b00, #00ff00);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        .health-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            text-shadow: 0 0 5px #000;
+        }
+
+        /* Mobile Controls */
+        .mobile-controls {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: none;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 10;
+        }
+
+        .mobile-controls.active {
+            display: flex;
+        }
+
+        .control-btn {
+            width: 70px;
+            height: 70px;
+            background: rgba(79, 172, 254, 0.3);
+            border: 2px solid #4facfe;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: #fff;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-btn:active {
+            background: rgba(79, 172, 254, 0.5);
+            transform: scale(0.95);
+        }
+
+        .joystick-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Game Over Screen */
+        .game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .game-over-screen.active {
+            display: flex;
+        }
+
+        .game-over-title {
+            font-size: 3em;
+            margin-bottom: 30px;
+            animation: bounce 1s ease;
+        }
+
+        .game-over-title.win {
+            color: #00ff00;
+            text-shadow: 0 0 20px #00ff00;
+        }
+
+        .game-over-title.lose {
+            color: #ff0000;
+            text-shadow: 0 0 20px #ff0000;
+        }
+
+        .final-stats {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .final-stat {
+            font-size: 1.5em;
+            margin: 10px 0;
+            color: #4facfe;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 2em;
+            }
+            .menu-btn {
+                padding: 12px 35px;
+                font-size: 1em;
+            }
+            .car-selection {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .health-bar {
+                width: 200px;
+            }
+        }
+
+        .choose-h2 {
+            font-size: 37px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: start;
+        }
+
+        .btns {
+            display: flex;
+            gap: 19px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <select id="languageSelect">
+            <option value="uz">O'zbek</option>
+            <option value="en">English</option>
+            <option value="ru">Русский</option>
+        </select>
+    </div>
+
+    <!-- Main Menu -->
+    <div class="menu-screen" id="mainMenu">
+        <div class="game-title" id="gameTitle">CAR BATTLE RACING</div>
+        <div class="game-subtitle" id="gameSubtitle">3D Action Racing Game</div>
+        
+        <h2 class="choose-h2" id="chooseCar">Mashina turini tanlang:</h2>
+        <div class="car-selection" id="carSelection">
+            <div class="car-card" data-car="0">
+                <div class="car-name" id="car1Name">🏎️ TEZKOR DEMON</div>
+                <div class="car-stats" id="car1Stats">Tezlik: ⭐⭐⭐⭐⭐<br>Kuch: ⭐⭐⭐</div>
+            </div>
+            <div class="car-card selected" data-car="1">
+                <div class="car-name" id="car2Name">🚗 TANK YO'QOTUVCHI</div>
+                <div class="car-stats" id="car2Stats">Tezlik: ⭐⭐⭐<br>Kuch: ⭐⭐⭐⭐⭐</div>
+            </div>
+            <div class="car-card" data-car="2">
+                <div class="car-name" id="car3Name">🏁 BALANSLI RACER</div>
+                <div class="car-stats" id="car3Stats">Tezlik: ⭐⭐⭐⭐<br>Kuch: ⭐⭐⭐⭐</div>
+            </div>
+        </div>
+
+        <div class="btns">
+            <button class="menu-btn" id="startBtn">O'yinni Boshlash</button>
+            <button class="menu-btn" id="instructionsBtn">Qoidalar</button>
+        </div>
+    </div>
+
+    <!-- HUD -->
+    <div class="hud" id="hud">
+        <div class="hud-top">
+            <div class="stat-box">
+                <div class="stat-label" id="scoreLabel">Ball</div>
+                <div class="stat-value" id="score">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label" id="enemiesLabel">Dushmanlar</div>
+                <div class="stat-value" id="enemiesLeft">10</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label" id="timeLabel">Vaqt</div>
+                <div class="stat-value" id="timer">0</div>
+            </div>
+        </div>
+        
+        <div class="health-bar">
+            <div class="health-fill" id="healthFill"></div>
+            <div class="health-text" id="healthText">100%</div>
+        </div>
+    </div>
+
+    <!-- Mobile Controls -->
+    <div class="mobile-controls" id="mobileControls">
+        <div class="joystick-area">
+            <div class="control-btn" id="leftBtn">◄</div>
+            <div class="control-btn" id="rightBtn">►</div>
+        </div>
+        <div class="action-area">
+            <div class="control-btn" id="shootBtn">🔫</div>
+            <div class="control-btn" id="boostBtn">⚡</div>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div class="game-over-screen" id="gameOverScreen">
+        <div class="game-over-title" id="gameOverTitle">G'alaba!</div>
+        <div class="final-stats">
+            <div class="final-stat"><span id="finalScoreLabel">Yakuniy Ball:</span> <span id="finalScore">0</span></div>
+            <div class="final-stat"><span id="finalKillsLabel">O'ldirganlar:</span> <span id="finalKills">0</span></div>
+            <div class="final-stat"><span id="finalTimeLabel">Vaqt:</span> <span id="finalTime">0</span>s</div>
+        </div>
+        <button class="menu-btn" id="restartBtn">Qayta O'ynash</button>
+        <button class="menu-btn" id="menuBtn">Menyu</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Translations
+        const translations = {
+            uz: {
+                title: "CAR BATTLE RACING",
+                subtitle: "3D Action Racing O'yini",
+                chooseCar: "Mashina turini tanlang:",
+                car1Name: "🏎️ TEZKOR DEMON",
+                car2Name: "🚗 TANK YO'QOTUVCHI",
+                car3Name: "🏁 BALANSLI RACER",
+                car1Stats: "Tezlik: ⭐⭐⭐⭐⭐<br>Kuch: ⭐⭐⭐",
+                car2Stats: "Tezlik: ⭐⭐⭐<br>Kuch: ⭐⭐⭐⭐⭐",
+                car3Stats: "Tezlik: ⭐⭐⭐⭐<br>Kuch: ⭐⭐⭐⭐",
+                startBtn: "O'yinni Boshlash",
+                instructions: "Qoidalar",
+                scoreLabel: "Ball",
+                enemiesLabel: "Dushmanlar",
+                timeLabel: "Vaqt",
+                victory: "G'ALABA! 🏆",
+                defeat: "YUTQAZDINGIZ 💥",
+                finalScoreLabel: "Yakuniy Ball:",
+                finalKillsLabel: "O'ldirganlar:",
+                finalTimeLabel: "Vaqt:",
+                restart: "Qayta O'ynash",
+                menu: "Menyu",
+                instructionsText: "🎮 QOIDALAR:\n\n" +
+                    "KOMPYUTER:\n" +
+                    "↑ W / ↑ - Oldinga\n" +
+                    "↓ S / ↓ - Orqaga\n" +
+                    "← A / ← - Chapga\n" +
+                    "→ D / → - O'ngga\n" +
+                    "SPACE - Otish\n" +
+                    "SHIFT - Tezlashtirish\n\n" +
+                    "MOBIL:\n" +
+                    "Ekrandagi tugmalardan foydalaning\n\n" +
+                    "MAQSAD:\n" +
+                    "✓ Barcha dushmanlarni yo'q qiling\n" +
+                    "✓ Sog'ligingizni saqlang\n" +
+                    "✓ Ko'proq ball to'plang!\n" +
+                    "⚠️ Dushmanlar sizga o'q otadi!\n\n" +
+                    "Omad tilaymiz! 🏁"
+            },
+            en: {
+                title: "CAR BATTLE RACING",
+                subtitle: "3D Action Racing Game",
+                chooseCar: "Choose Your Car:",
+                car1Name: "🏎️ SPEED DEMON",
+                car2Name: "🚗 TANK DESTROYER",
+                car3Name: "🏁 BALANCED RACER",
+                car1Stats: "Speed: ⭐⭐⭐⭐⭐<br>Power: ⭐⭐⭐",
+                car2Stats: "Speed: ⭐⭐⭐<br>Power: ⭐⭐⭐⭐⭐",
+                car3Stats: "Speed: ⭐⭐⭐⭐<br>Power: ⭐⭐⭐⭐",
+                startBtn: "Start Game",
+                instructions: "Instructions",
+                scoreLabel: "Score",
+                enemiesLabel: "Enemies",
+                timeLabel: "Time",
+                victory: "VICTORY! 🏆",
+                defeat: "GAME OVER 💥",
+                finalScoreLabel: "Final Score:",
+                finalKillsLabel: "Kills:",
+                finalTimeLabel: "Time:",
+                restart: "Restart",
+                menu: "Menu",
+                instructionsText: "🎮 CONTROLS:\n\n" +
+                    "KEYBOARD:\n" +
+                    "↑ W / ↑ - Forward\n" +
+                    "↓ S / ↓ - Backward\n" +
+                    "← A / ← - Left\n" +
+                    "→ D / → - Right\n" +
+                    "SPACE - Shoot\n" +
+                    "SHIFT - Boost\n\n" +
+                    "MOBILE:\n" +
+                    "Use on-screen buttons\n\n" +
+                    "OBJECTIVE:\n" +
+                    "✓ Destroy all enemies\n" +
+                    "✓ Keep your health up\n" +
+                    "✓ Score more points!\n" +
+                    "⚠️ Enemies shoot back!\n\n" +
+                    "Good luck! 🏁"
+            },
+            ru: {
+                title: "CAR BATTLE RACING",
+                subtitle: "3D Гоночная Игра",
+                chooseCar: "Выберите машину:",
+                car1Name: "🏎️ ДЕМОН СКОРОСТИ",
+                car2Name: "🚗 ТАНК-РАЗРУШИТЕЛЬ",
+                car3Name: "🏁 СБАЛАНСИРОВАННЫЙ",
+                car1Stats: "Скорость: ⭐⭐⭐⭐⭐<br>Сила: ⭐⭐⭐",
+                car2Stats: "Скорость: ⭐⭐⭐<br>Сила: ⭐⭐⭐⭐⭐",
+                car3Stats: "Скорость: ⭐⭐⭐⭐<br>Сила: ⭐⭐⭐⭐",
+                startBtn: "Начать Игру",
+                instructions: "Правила",
+                scoreLabel: "Очки",
+                enemiesLabel: "Враги",
+                timeLabel: "Время",
+                victory: "ПОБЕДА! 🏆",
+                defeat: "ПОРАЖЕНИЕ 💥",
+                finalScoreLabel: "Итоговый счёт:",
+                finalKillsLabel: "Убийств:",
+                finalTimeLabel: "Время:",
+                restart: "Играть Снова",
+                menu: "Меню",
+                instructionsText: "🎮 УПРАВЛЕНИЕ:\n\n" +
+                    "КЛАВИАТУРА:\n" +
+                    "↑ W / ↑ - Вперёд\n" +
+                    "↓ S / ↓ - Назад\n" +
+                    "← A / ← - Влево\n" +
+                    "→ D / → - Вправо\n" +
+                    "ПРОБЕЛ - Стрелять\n" +
+                    "SHIFT - Ускорение\n\n" +
+                    "МОБИЛЬНЫЙ:\n" +
+                    "Используйте кнопки на экране\n\n" +
+                    "ЦЕЛЬ:\n" +
+                    "✓ Уничтожить всех врагов\n" +
+                    "✓ Сохранить здоровье\n" +
+                    "✓ Набрать больше очков!\n" +
+                    "⚠️ Враги стреляют в ответ!\n\n" +
+                    "Удачи! 🏁"
+            }
+        };
+
+        let currentLang = 'uz';
+
+        function updateLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+            
+            document.getElementById('gameTitle').textContent = t.title;
+            document.getElementById('gameSubtitle').textContent = t.subtitle;
+            document.getElementById('chooseCar').textContent = t.chooseCar;
+            document.getElementById('car1Name').textContent = t.car1Name;
+            document.getElementById('car2Name').textContent = t.car2Name;
+            document.getElementById('car3Name').textContent = t.car3Name;
+            document.getElementById('car1Stats').innerHTML = t.car1Stats;
+            document.getElementById('car2Stats').innerHTML = t.car2Stats;
+            document.getElementById('car3Stats').innerHTML = t.car3Stats;
+            document.getElementById('startBtn').textContent = t.startBtn;
+            document.getElementById('instructionsBtn').textContent = t.instructions;
+            document.getElementById('scoreLabel').textContent = t.scoreLabel;
+            document.getElementById('enemiesLabel').textContent = t.enemiesLabel;
+            document.getElementById('timeLabel').textContent = t.timeLabel;
+            document.getElementById('finalScoreLabel').textContent = t.finalScoreLabel;
+            document.getElementById('finalKillsLabel').textContent = t.finalKillsLabel;
+            document.getElementById('finalTimeLabel').textContent = t.finalTimeLabel;
+            document.getElementById('restartBtn').textContent = t.restart;
+            document.getElementById('menuBtn').textContent = t.menu;
+        }
+
+        document.getElementById('languageSelect').addEventListener('change', (e) => {
+            updateLanguage(e.target.value);
+        });
+
+        // Game State
+        const gameState = {
+            playing: false,
+            score: 0,
+            kills: 0,
+            health: 100,
+            enemiesLeft: 10,
+            startTime: 0,
+            selectedCar: 1,
+            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        };
+
+        // Input State
+        const input = {
+            left: false,
+            right: false,
+            up: false,
+            down: false,
+            shoot: false,
+            boost: false
+        };
+
+        // Three.js Setup
+        const canvas = document.getElementById('gameCanvas');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.Fog(0x000000, 10, 100);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040, 2);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+        dirLight.position.set(5, 10, 5);
+        dirLight.castShadow = true;
+        dirLight.shadow.camera.left = -50;
+        dirLight.shadow.camera.right = 50;
+        dirLight.shadow.camera.top = 50;
+        dirLight.shadow.camera.bottom = -50;
+        scene.add(dirLight);
+
+        // Ground
+        const groundGeometry = new THREE.PlaneGeometry(100, 100);
+        const groundMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x1a1a2e,
+            roughness: 0.8
+        });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        scene.add(ground);
+
+        // Grid
+        const gridHelper = new THREE.GridHelper(100, 50, 0x4facfe, 0x2a2a4e);
+        scene.add(gridHelper);
+
+        // Car configurations
+        const carConfigs = [
+            { speed: 0.5, turnSpeed: 0.05, color: 0xff0000, health: 80 },
+            { speed: 0.3, turnSpeed: 0.03, color: 0x00ff00, health: 150 },
+            { speed: 0.4, turnSpeed: 0.04, color: 0x0000ff, health: 100 }
+        ];
+
+        // Player Car
+        let player = null;
+
+        function createCar(color, isPlayer = false) {
+            const car = new THREE.Group();
+            
+            // Body
+            const bodyGeometry = new THREE.BoxGeometry(1.5, 0.5, 3);
+            const bodyMaterial = new THREE.MeshStandardMaterial({ color, metalness: 0.8, roughness: 0.2 });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.castShadow = true;
+            car.add(body);
+            
+            // Cabin
+            const cabinGeometry = new THREE.BoxGeometry(1.2, 0.4, 1.5);
+            const cabin = new THREE.Mesh(cabinGeometry, bodyMaterial);
+            cabin.position.y = 0.45;
+            cabin.position.z = -0.3;
+            cabin.castShadow = true;
+            car.add(cabin);
+            
+            // Wheels
+            const wheelGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.2, 16);
+            const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0x222222 });
+            
+            const wheelPositions = [
+                [-0.8, -0.3, 1], [0.8, -0.3, 1],
+                [-0.8, -0.3, -1], [0.8, -0.3, -1]
+            ];
+            
+            wheelPositions.forEach(pos => {
+                const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+                wheel.rotation.z = Math.PI / 2;
+                wheel.position.set(...pos);
+                wheel.castShadow = true;
+                car.add(wheel);
+            });
+            
+            // Weapon (Gun on top)
+            const gunGeometry = new THREE.BoxGeometry(0.2, 0.2, 1);
+            const gunMaterial = new THREE.MeshStandardMaterial({ color: 0x888888 });
+            const gun = new THREE.Mesh(gunGeometry, gunMaterial);
+            gun.position.set(0, 0.8, 1);
+            car.add(gun);
+            
+            car.velocity = new THREE.Vector3();
+            car.rotation.y = isPlayer ? 0 : Math.random() * Math.PI * 2;
+            car.health = isPlayer ? carConfigs[gameState.selectedCar].health : 100;
+            car.maxHealth = car.health;
+            car.isPlayer = isPlayer;
+            car.lastShootTime = 0;
+            
+            return car;
+        }
+
+        // Bullets
+        const bullets = [];
+
+        function createBullet(position, direction, isEnemy = false) {
+            const bulletGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+            const bulletMaterial = new THREE.MeshBasicMaterial({ 
+                color: isEnemy ? 0xff0000 : 0xffff00 
+            });
+            const bullet = new THREE.Mesh(bulletGeometry, bulletMaterial);
+            
+            bullet.position.copy(position);
+            bullet.position.y = 0.5;
+            bullet.velocity = direction.normalize().multiplyScalar(0.8);
+            bullet.lifetime = 100;
+            bullet.isEnemy = isEnemy;
+            
+            scene.add(bullet);
+            bullets.push(bullet);
+            
+            playSound('shoot');
+        }
+
+        // Enemies
+        const enemies = [];
+
+        function spawnEnemy() {
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 30 + Math.random() * 20;
+            
+            const enemy = createCar(0xff6600, false);
+            enemy.position.x = Math.cos(angle) * distance;
+            enemy.position.z = Math.sin(angle) * distance;
+            
+            scene.add(enemy);
+            enemies.push(enemy);
+        }
+
+        // Initialize game
+        function initGame() {
+            // Clear previous game
+            if (player) scene.remove(player);
+            enemies.forEach(e => scene.remove(e));
+            bullets.forEach(b => scene.remove(b));
+            enemies.length = 0;
+            bullets.length = 0;
+            
+            // Create player
+            const config = carConfigs[gameState.selectedCar];
+            player = createCar(config.color, true);
+            player.position.set(0, 0, 0);
+            scene.add(player);
+            
+            // Camera setup
+            camera.position.set(0, 8, -10);
+            camera.lookAt(player.position);
+            
+            // Spawn enemies
+            for (let i = 0; i < gameState.enemiesLeft; i++) {
+                spawnEnemy();
+            }
+            
+            // Reset game state
+            gameState.score = 0;
+            gameState.kills = 0;
+            gameState.health = config.health;
+            player.health = config.health;
+            player.maxHealth = config.health;
+            gameState.startTime = Date.now();
+            gameState.playing = true;
+            
+            updateHUD();
+        }
+
+        // Update HUD
+        function updateHUD() {
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('enemiesLeft').textContent = enemies.length;
+            
+            const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+            document.getElementById('timer').textContent = elapsed;
+            
+            const healthPercent = (player.health / player.maxHealth) * 100;
+            document.getElementById('healthFill').style.width = healthPercent + '%';
+            document.getElementById('healthText').textContent = Math.max(0, Math.floor(healthPercent)) + '%';
+        }
+
+        // Game Loop
+        let lastShootTime = 0;
+        const shootCooldown = 600;
+        const enemyShootCooldown = 6000; // 3 sekund
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (!gameState.playing) {
+                renderer.render(scene, camera);
+                return;
+            }
+            
+            const config = carConfigs[gameState.selectedCar];
+            const currentTime = Date.now();
+            
+            // Player movement
+            if (input.up) {
+                player.velocity.z += config.speed * 0.1;
+            }
+            if (input.down) {
+                player.velocity.z -= config.speed * 0.05;
+            }
+            if (input.left) {
+                player.rotation.y += config.turnSpeed;
+            }
+            if (input.right) {
+                player.rotation.y -= config.turnSpeed;
+            }
+            
+            // Apply velocity
+            const forward = new THREE.Vector3(0, 0, 1).applyQuaternion(player.quaternion);
+            player.position.add(forward.multiplyScalar(player.velocity.z));
+            
+            // Friction
+            player.velocity.multiplyScalar(0.95);
+            
+            // Boundary check
+            const boundary = 45;
+            player.position.x = Math.max(-boundary, Math.min(boundary, player.position.x));
+            player.position.z = Math.max(-boundary, Math.min(boundary, player.position.z));
+            
+            // Shooting
+            if (input.shoot && currentTime - lastShootTime > shootCooldown) {
+                const bulletPos = player.position.clone();
+                const bulletDir = new THREE.Vector3(0, 0, 1).applyQuaternion(player.quaternion);
+                createBullet(bulletPos, bulletDir, false);
+                lastShootTime = currentTime;
+            }
+            
+            // Update bullets
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                const bullet = bullets[i];
+                bullet.position.add(bullet.velocity);
+                bullet.lifetime--;
+                
+                if (bullet.lifetime <= 0) {
+                    scene.remove(bullet);
+                    bullets.splice(i, 1);
+                    continue;
+                }
+                
+                // Player bullet collision with enemies
+                if (!bullet.isEnemy) {
+                    for (let j = enemies.length - 1; j >= 0; j--) {
+                        const enemy = enemies[j];
+                        if (bullet.position.distanceTo(enemy.position) < 2) {
+                            enemy.health -= 34;
+                            scene.remove(bullet);
+                            bullets.splice(i, 1);
+                            
+                            if (enemy.health <= 0) {
+                                createExplosion(enemy.position);
+                                scene.remove(enemy);
+                                enemies.splice(j, 1);
+                                gameState.score += 100;
+                                gameState.kills++;
+                                playSound('explosion');
+                                
+                                if (enemies.length === 0) {
+                                    endGame(true);
+                                }
+                            } else {
+                                playSound('hit');
+                            }
+                            break;
+                        }
+                    }
+                }
+                // Enemy bullet collision with player
+                else if (bullet.isEnemy) {
+                    if (bullet.position.distanceTo(player.position) < 2) {
+                        player.health -= 10;
+                        scene.remove(bullet);
+                        bullets.splice(i, 1);
+                        playSound('hit');
+                        
+                        if (player.health <= 0) {
+                            endGame(false);
+                        }
+                    }
+                }
+            }
+            
+            // Enemy AI
+            enemies.forEach(enemy => {
+                const toPlayer = new THREE.Vector3()
+                    .subVectors(player.position, enemy.position)
+                    .normalize();
+                
+                const angle = Math.atan2(toPlayer.x, toPlayer.z);
+                enemy.rotation.y = angle;
+                
+                const distance = enemy.position.distanceTo(player.position);
+                
+                if (distance > 5 && distance < 40) {
+                    enemy.position.add(toPlayer.multiplyScalar(0.08));
+                }
+                
+                // Enemy shooting - agar player 3 soniya davomida o'q otmasa
+                if (currentTime - lastShootTime > enemyShootCooldown) {
+                    if (distance < 30 && currentTime - enemy.lastShootTime > 2000) {
+                        const enemyBulletPos = enemy.position.clone();
+                        const enemyBulletDir = toPlayer.clone();
+                        createBullet(enemyBulletPos, enemyBulletDir, true);
+                        enemy.lastShootTime = currentTime;
+                    }
+                }
+                
+                // Enemy collision with player
+                if (distance < 2.5) {
+                    player.health -= 0.3;
+                    
+                    if (player.health <= 0) {
+                        endGame(false);
+                    }
+                }
+                
+                // Random movement
+                if (Math.random() < 0.02) {
+                    enemy.rotation.y += (Math.random() - 0.5) * 0.5;
+                }
+            });
+            
+            // Camera follow
+            const cameraOffset = new THREE.Vector3(0, 8, -10);
+            const cameraPosition = player.position.clone().add(
+                cameraOffset.applyQuaternion(player.quaternion)
+            );
+            camera.position.lerp(cameraPosition, 0.1);
+            camera.lookAt(player.position);
+            
+            updateHUD();
+            renderer.render(scene, camera);
+        }
+
+        // End game
+        function endGame(won) {
+            gameState.playing = false;
+            
+            const gameOverScreen = document.getElementById('gameOverScreen');
+            const gameOverTitle = document.getElementById('gameOverTitle');
+            const t = translations[currentLang];
+            
+            if (won) {
+                gameOverTitle.textContent = t.victory;
+                gameOverTitle.className = 'game-over-title win';
+                playSound('win');
+            } else {
+                gameOverTitle.textContent = t.defeat;
+                gameOverTitle.className = 'game-over-title lose';
+                playSound('lose');
+            }
+            
+            const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+            document.getElementById('finalScore').textContent = gameState.score;
+            document.getElementById('finalKills').textContent = gameState.kills;
+            document.getElementById('finalTime').textContent = elapsed;
+            
+            gameOverScreen.classList.add('active');
+        }
+
+        // Sound effects
+        function playSound(type) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            switch(type) {
+                case 'shoot':
+                    oscillator.frequency.value = 400;
+                    gainNode.gain.value = 0.1;
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                    break;
+                case 'hit':
+                    oscillator.frequency.value = 200;
+                    gainNode.gain.value = 0.15;
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.15);
+                    break;
+                case 'explosion':
+                    oscillator.frequency.value = 100;
+                    gainNode.gain.value = 0.2;
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                    break;
+                case 'win':
+                    oscillator.frequency.value = 600;
+                    gainNode.gain.value = 0.15;
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.5);
+                    break;
+                case 'lose':
+                    oscillator.frequency.value = 150;
+                    gainNode.gain.value = 0.2;
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.8);
+                    break;
+            }
+        }
+
+        // Explosion effect
+        function createExplosion(position) {
+            const particleCount = 20;
+            const particles = [];
+            
+            for (let i = 0; i < particleCount; i++) {
+                const geometry = new THREE.SphereGeometry(0.1, 4, 4);
+                const material = new THREE.MeshBasicMaterial({ 
+                    color: Math.random() > 0.5 ? 0xff6600 : 0xffff00 
+                });
+                const particle = new THREE.Mesh(geometry, material);
+                
+                particle.position.copy(position);
+                particle.velocity = new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.3,
+                    Math.random() * 0.3,
+                    (Math.random() - 0.5) * 0.3
+                );
+                particle.lifetime = 30;
+                
+                scene.add(particle);
+                particles.push(particle);
+            }
+            
+            const animateParticles = () => {
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.position.add(p.velocity);
+                    p.velocity.y -= 0.01;
+                    p.lifetime--;
+                    
+                    if (p.lifetime <= 0) {
+                        scene.remove(p);
+                        particles.splice(i, 1);
+                    }
+                }
+                
+                if (particles.length > 0) {
+                    requestAnimationFrame(animateParticles);
+                }
+            };
+            
+            animateParticles();
+        }
+
+        // Event Listeners
+        document.getElementById('startBtn').addEventListener('click', () => {
+            document.getElementById('mainMenu').classList.add('hidden');
+            document.getElementById('hud').classList.add('active');
+            
+            if (gameState.isMobile) {
+                document.getElementById('mobileControls').classList.add('active');
+            }
+            
+            initGame();
+        });
+
+        document.getElementById('instructionsBtn').addEventListener('click', () => {
+            alert(translations[currentLang].instructionsText);
+        });
+
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            document.getElementById('gameOverScreen').classList.remove('active');
+            initGame();
+        });
+
+        document.getElementById('menuBtn').addEventListener('click', () => {
+            document.getElementById('gameOverScreen').classList.remove('active');
+            document.getElementById('hud').classList.remove('active');
+            document.getElementById('mobileControls').classList.remove('active');
+            document.getElementById('mainMenu').classList.remove('hidden');
+        });
+
+        // Car selection
+        document.querySelectorAll('.car-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.car-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                gameState.selectedCar = parseInt(card.dataset.car);
+            });
+        });
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (!gameState.playing) return;
+            
+            switch(e.key.toLowerCase()) {
+                case 'w':
+                case 'arrowup':
+                    input.up = true;
+                    e.preventDefault();
+                    break;
+                case 's':
+                case 'arrowdown':
+                    input.down = true;
+                    e.preventDefault();
+                    break;
+                case 'a':
+                case 'arrowleft':
+                    input.left = true;
+                    e.preventDefault();
+                    break;
+                case 'd':
+                case 'arrowright':
+                    input.right = true;
+                    e.preventDefault();
+                    break;
+                case ' ':
+                    input.shoot = true;
+                    e.preventDefault();
+                    break;
+                case 'shift':
+                    input.boost = true;
+                    e.preventDefault();
+                    break;
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            switch(e.key.toLowerCase()) {
+                case 'w':
+                case 'arrowup':
+                    input.up = false;
+                    break;
+                case 's':
+                case 'arrowdown':
+                    input.down = false;
+                    break;
+                case 'a':
+                case 'arrowleft':
+                    input.left = false;
+                    break;
+                case 'd':
+                case 'arrowright':
+                    input.right = false;
+                    break;
+                case ' ':
+                    input.shoot = false;
+                    break;
+                case 'shift':
+                    input.boost = false;
+                    break;
+            }
+        });
+
+        // Mobile controls
+        const addTouchControl = (id, key) => {
+            const btn = document.getElementById(id);
+            
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                input[key] = true;
+            });
+            
+            btn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                input[key] = false;
+            });
+            
+            btn.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                input[key] = true;
+            });
+            
+            btn.addEventListener('mouseup', (e) => {
+                e.preventDefault();
+                input[key] = false;
+            });
+        };
+
+        addTouchControl('leftBtn', 'left');
+        addTouchControl('rightBtn', 'right');
+        addTouchControl('shootBtn', 'shoot');
+        addTouchControl('boostBtn', 'up');
+
+        // Add stars
+        const starGeometry = new THREE.BufferGeometry();
+        const starVertices = [];
+
+        for (let i = 0; i < 1000; i++) {
+            const x = (Math.random() - 0.5) * 200;
+            const y = Math.random() * 100 + 20;
+            const z = (Math.random() - 0.5) * 200;
+            starVertices.push(x, y, z);
+        }
+
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.3 });
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+
+        // Window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Start animation loop
+        animate();
+
+        console.log('🎮 3D Car Battle Racing yuklanmoqda...');
+        console.log('✅ O\'yin tayyor! Start tugmasini bosing!');
+    </script>
+</body>
+</html>
