@@ -976,3 +976,53 @@ document.getElementById('menuBtn').textContent = t.menu;
 document.getElementById('languageSelect').addEventListener('change', (e) => {
 updateLanguage(e.target.value);
 });
+
+
+// Kontekst menyusini blokirovka qilish
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    alert('Kontekst menyusi bloklangan!');
+});
+
+// Tezkor tugmalarni blokirovka qilish
+document.addEventListener('keydown', function(e) {
+    // Ctrl+U blokirovkasi
+    if (e.ctrlKey && e.keyCode === 85) {
+        e.preventDefault();
+        alert('Sahifa manbasini koʻrish bloklangan!');
+        return false;
+    }
+    
+    // Ctrl+Shift+I, F12 blokirovkasi
+    if (e.ctrlKey && e.shiftKey && e.keyCode === 73 || e.keyCode === 123) {
+        e.preventDefault();
+        alert('Developer asboblari bloklangan!');
+        return false;
+    }
+});
+
+// Sahifa manbasiga kirishni blokirovka qilish
+function disableViewSource() {
+    // Bu brauzerda sahifa manbasini yashirishga urinish
+    window.onkeypress = function(event) {
+        if (event.keyCode === 123) { // F12
+            return false;
+        } else if (event.ctrlKey && event.shiftKey && event.keyCode === 73) { // Ctrl+Shift+I
+            return false;
+        } else if (event.ctrlKey && event.keyCode === 85) { // Ctrl+U
+            return false;
+        }
+    };
+    
+    // O'ng tugma blokirovkasi
+    document.oncontextmenu = function() {
+        return false;
+    };
+    
+    // Drag and drop blokirovkasi
+    document.ondragstart = function() {
+        return false;
+    };
+}
+
+disableViewSource();
